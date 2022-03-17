@@ -1,8 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import * as mongoose from 'mongoose'
 
-@Schema()
-export class Tournament{
+@Schema({collection: 'tournaments'})
+export class TournamentDao{
+    @Prop()
+    _id: mongoose.Types.ObjectId
+
     @Prop()
     id: string
 
@@ -16,6 +19,6 @@ export class Tournament{
     phases: any[]
 }
 
-export type TournamentDocument = Tournament & Document
+export type TournamentDocument = TournamentDao & Document
 
-export const TournamentSchema = SchemaFactory.createForClass(Tournament)
+export const TournamentSchema = SchemaFactory.createForClass(TournamentDao)

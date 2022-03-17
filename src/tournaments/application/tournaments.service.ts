@@ -1,13 +1,27 @@
 import { Injectable } from "@nestjs/common";
-import { Tournament, TournamentDocument } from "./schemas/tournament.schema";
-import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import {TournamentDao, TournamentDocument } from "../persistence/schemas/tournament.schema";
+import { TournamentsRepository } from "../persistence/tournaments.repository";
+import { Tournament } from "./models/tournament.model";
 
 @Injectable()
 export class TournamentsService{
-    constructor(@InjectModel(Tournament.name) private tournamentModel: Model<TournamentDocument>) {}
+    constructor(private tournamentsRepository: TournamentsRepository) { }
 
     async get(id: string): Promise<Tournament>{
-        return await this.tournamentModel.findById(id).exec()
+        const tournament: TournamentDao =  await this.tournamentsRepository.get(id)
+        return this.mapTournamentDaoToTournament(tournament)
     }
+
+    //async post(tournament)
+
+    mapTournamentDaoToTournament(tournamentDao: TournamentDao): Tournament{
+        const tournament: Tournament = new Tournament()
+        tournament.id = tournamentDao.id
+        tournament.name = tournamentDao.name
+        tournament.participants = tournamentDao.participants
+        tournament.phases = tournamentDao.phases
+        return tournament
+    }
+
 }
